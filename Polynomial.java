@@ -1,6 +1,3 @@
-
-import components.standard.Standard;
-
 /**
  * 
  *
@@ -12,7 +9,7 @@ import components.standard.Standard;
  *
  *
  */
-public interface Polynomial extends Standard<Polynomial> {
+public interface Polynomial extends PolynomialKernel {
     /**
      * Adds a term with coefficient {@code constant} and degree {@code power} to
      * this.
@@ -30,6 +27,7 @@ public interface Polynomial extends Standard<Polynomial> {
      *
      * @ensures this = constant * (x ^ power) + #this
      */
+    @Override
     void addTerm(int constant, int power);
 
     /**
@@ -41,6 +39,7 @@ public interface Polynomial extends Standard<Polynomial> {
      * @updates this
      * @ensures #this = removeTerm * (x ^ power) + this
      */
+    @Override
     int removeTerm(int power);
 
     /**
@@ -50,6 +49,7 @@ public interface Polynomial extends Standard<Polynomial> {
      * @ensures degree = [the exponent of the highest order term in this]
      *
      */
+    @Override
     int degree();
 
 }
