@@ -43,17 +43,20 @@ public abstract class PolynomialSecondary implements Polynomial {
      */
     private static Polynomial duplicate(Polynomial p) {
         Polynomial copy = p.newInstance();
+        Polynomial temp = p.newInstance();
         int degree;
         int constant;
         while (p.degree() > 0) {
             degree = p.degree();
+
             constant = p.removeTerm(degree);
             copy.addTerm(constant, degree);
-            p.addTerm(constant, degree);
+            temp.addTerm(constant, degree);
         }
         constant = p.removeTerm(0);
         copy.addTerm(constant, 0);
-        p.addTerm(constant, 0);
+        temp.addTerm(constant, 0);
+        p.transferFrom(temp);
         return copy;
     }
 
@@ -77,6 +80,23 @@ public abstract class PolynomialSecondary implements Polynomial {
         this.addTerm(p.removeTerm(0), 0);
         p.clear();
     }
+
+    /**
+     * Subtracts p from this.
+     *
+     * @param p
+     *            the polynomial to be subtracted
+     * @updates this
+     *
+     * @clears p
+     *
+     * @ensures this = #this - p
+     */
+    void subtract(Polynomial p) {
+        negate(p);
+        this.add(p);
+    }
+
 //////////////////////////////////////////////////
 //    DIFFERENT IMPLEMENTATIONS OF MULTIPLY    ///
 //////////////////////////////////////////////////
@@ -157,7 +177,7 @@ public abstract class PolynomialSecondary implements Polynomial {
      *
      * @ensures this = #this * p
      */
-    void multiply(Polynomial p) {
+    public void multiply(Polynomial p) {
         Polynomial pcopy = duplicate(p);
         Polynomial temp = this.newInstance();
         int thispower = this.degree();
@@ -179,186 +199,225 @@ public abstract class PolynomialSecondary implements Polynomial {
         this.add(temp);
     }
 
-    /**
-     * Divides this by p.
-     *
-     * @param p
-     *            the denominator polynomial
-     *
-     * @updates this
-     *
-     * @return the remainder of #this / p
-     *
-     * @ensures this = #this / p and divide = [remainder of #this/p]
-     */
-    Polynomial divide(Polynomial p) {
-        Polynomial rem = this.newInstance();
-        Polynomial pcopy = duplicate(p);
+//    /**
+//     * Divides this by p.
+//     *
+//     * @param p
+//     *            the denominator polynomial
+//     *
+//     * @updates this
+//     *
+//     * @return the remainder of #this / p
+//     *
+//     * @ensures this = #this / p and divide = [remainder of #this/p]
+//     */
+//    Polynomial divide(Polynomial p) {
+//        Polynomial rem = this.newInstance();
+//        Polynomial pcopy = duplicate(p);
+//
+//        int thisdegree = this.degree();
+//        int thiscoeff = this.removeTerm(thisdegree);
+//        this.addTerm(thiscoeff, thisdegree);
+//
+//        int pdegree = p.degree();
+//        int pcoeff = p.removeTerm(pdegree);
+//        p.addTerm(pcoeff, pdegree);
+//
+//        int factordegree;
+//        int factorcoeff;
+//        if (thisdegree >= pdegree) {
+//            factordegree = thisdegree - pdegree;
+//            factorcoeff = thiscoeff / pcoeff;
+//
+//            Polynomial temp = p.newInstance();
+//            int ppower;
+//            int pconstant;
+//            while (p.degree() > 0) {
+//                ppower = p.degree();
+//                pconstant = p.removeTerm(ppower);
+//                temp.addTerm(pconstant * factorcoeff, ppower + factordegree);
+//            }
+//            pconstant = p.removeTerm(0);
+//            temp.addTerm(pconstant * factorcoeff, factordegree);
+//
+//            negate(temp);
+//
+//            this.add(temp);
+//
+//            rem = this.divide(pcopy);
+//
+//            this.addTerm(factorcoeff, factordegree);
+//        } else {
+//            rem = duplicate(this);
+//        }
+//        return rem;
+//    }
+//    /**
+//     * Divides this by p.
+//     *
+//     * @param p
+//     *            the denominator polynomial
+//     *
+//     * @updates this
+//     *
+//     * @return the remainder of #this / p
+//     *
+//     * @ensures this = #this / p and divide = [remainder of #this/p]
+//     */
+//    //p is the divisor
+//    //#this is the dividend of division
+//    //this is quotient of division
+//    //return is remainder of division
+//    //duplicate p, multiply p by
+//    public Polynomial divide(Polynomial p) {
+//        Polynomial quotient = this.newInstance();
+//        Polynomial temp = this.newInstance();
+//
+//        int divpower = p.degree();
+//        int divcoeff = p.removeTerm(divpower);
+//
+//        int thispower = this.degree();
+//        int thiscoeff = this.removeTerm(thispower);
+//
+//        int quotcoeff = thiscoeff / divcoeff;
+//        int quotpower = thispower - divpower;
+//
+//        while (this.degree() > p.degree()) {
+//            
+//        }
+//
+//    }
 
-        int thisdegree = this.degree();
-        int thiscoeff = this.removeTerm(thisdegree);
-        this.addTerm(thiscoeff, thisdegree);
-
-        int pdegree = p.degree();
-        int pcoeff = p.removeTerm(pdegree);
-        p.addTerm(pcoeff, pdegree);
-
-        int factordegree;
-        int factorcoeff;
-        if (thisdegree >= pdegree) {
-            factordegree = thisdegree - pdegree;
-            factorcoeff = thiscoeff / pcoeff;
-
-            Polynomial temp = p.newInstance();
-            int ppower;
-            int pconstant;
-            while (p.degree() > 0) {
-                ppower = p.degree();
-                pconstant = p.removeTerm(ppower);
-                temp.addTerm(pconstant * factorcoeff, ppower + factordegree);
-            }
-            pconstant = p.removeTerm(0);
-            temp.addTerm(pconstant * factorcoeff, factordegree);
-
-            negate(temp);
-
-            this.add(temp);
-
-            rem = this.divide(pcopy);
-
-            this.addTerm(factorcoeff, factordegree);
-        } else {
-            rem = duplicate(this);
-        }
-        return rem;
-    }
-
-    /**
-     * Evaluates this at x = {@code x}.
-     *
-     * @param x
-     *            the value used to evaluate the expression
-     *
-     * @return the evaluation of this at x
-     *
-     * @ensures evaluateAt = f({@code x}) where f(x) = this
-     */
-    double evaluateAt(double x) {
-        Polynomial p = duplicate(this);
-        double answer = 0;
-
-        int ppower;
-        int pconstant;
-        while (p.degree() > 0) {
-            ppower = p.degree();
-            pconstant = p.removeTerm(ppower);
-            answer = answer + (Math.pow(x, ppower) * pconstant);
-        }
-        pconstant = p.removeTerm(0);
-        answer = answer + pconstant;
-        return answer;
-    }
-
-    /**
-     * Checks if p is a factor of this.
-     *
-     * @param p
-     *            the polynomial to be checked
-     * @return true iff this % p is 0
-     *
-     * @ensures isMultiple = (this % p == 0)
-     */
-    boolean isMultiple(Polynomial p) {
-        boolean answer = false;
-        Polynomial thistemp = duplicate(this);
-        Polynomial pcopy = duplicate(p);
-
-        Polynomial rem = this.divide(pcopy);
-        this.transferFrom(thistemp);
-
-        if (rem.removeTerm(0) == 0 && rem.degree() == 0) {
-            answer = true;
-        }
-
-        return answer;
-    }
-
-    /**
-     * takes the derivative this.
-     *
-     * @updates this
-     *
-     * @ensures this = d/dx(#this)
-     *
-     */
-    void takeDerivative() {
-        Polynomial temp = this.newInstance();
-        int thispower;
-        int thisconstant;
-        while (this.degree() > 0) {
-            thispower = this.degree();
-            thisconstant = this.removeTerm(thispower);
-            temp.addTerm(thisconstant * thispower, thispower - 1);
-        }
-        this.clear();
-        this.transferFrom(temp);
-    }
-
-    /**
-     * Evaluates the definite integral of this with bounds {@code upperbound} to
-     * {@code lowerbound}.
-     *
-     * @return the area bounded by the polynomial curve and bounds of
-     *         integration
-     *
-     * @param upperbound
-     *            the upper bound of integration
-     *
-     * @param lowerbound
-     *            the lower bound of integration
-     *
-     * @ensures defIntegral = F({@code upperbound}) - F({@code lowerbound})
-     *          where d/dx(F(x)) = this
-     *
-     *
-     */
-    double defIntegral(double upperbound, double lowerbound) {
-
-        double answer = 0;
-        int thisdegree;
-        int thisconstant;
-
-        thisdegree = this.degree();
-        thisconstant = this.removeTerm(thisdegree);
-        if (thisdegree == 0) {
-            answer = (thisconstant * upperbound - thisconstant * lowerbound);
-        } else {
-            answer = thisconstant * Math.pow(upperbound, thisdegree)
-                    - thisconstant * Math.pow(lowerbound, thisdegree);
-            answer = answer + this.defIntegral(upperbound, lowerbound);
-        }
-        this.addTerm(thisconstant, thisdegree);
-        return answer;
-    }
+//    /**
+//     * Evaluates this at x = {@code x}.
+//     *
+//     * @param x
+//     *            the value used to evaluate the expression
+//     *
+//     * @return the evaluation of this at x
+//     *
+//     * @ensures evaluateAt = f({@code x}) where f(x) = this
+//     */
+//    double evaluateAt(double x) {
+//        Polynomial p = duplicate(this);
+//        double answer = 0;
+//
+//        int ppower;
+//        int pconstant;
+//        while (p.degree() > 0) {
+//            ppower = p.degree();
+//            pconstant = p.removeTerm(ppower);
+//            answer = answer + (Math.pow(x, ppower) * pconstant);
+//        }
+//        pconstant = p.removeTerm(0);
+//        answer = answer + pconstant;
+//        return answer;
+//    }
+//
+//    /**
+//     * Checks if p is a factor of this.
+//     *
+//     * @param p
+//     *            the polynomial to be checked
+//     * @return true iff this % p is 0
+//     *
+//     * @ensures isMultiple = (this % p == 0)
+//     */
+//    boolean isMultiple(Polynomial p) {
+//        boolean answer = false;
+//        Polynomial thistemp = duplicate(this);
+//        Polynomial pcopy = duplicate(p);
+//
+//        Polynomial rem = this.divide(pcopy);
+//        this.transferFrom(thistemp);
+//
+//        if (rem.removeTerm(0) == 0 && rem.degree() == 0) {
+//            answer = true;
+//        }
+//
+//        return answer;
+//    }
+//
+//    /**
+//     * takes the derivative this.
+//     *
+//     * @updates this
+//     *
+//     * @ensures this = d/dx(#this)
+//     *
+//     */
+//    void takeDerivative() {
+//        Polynomial temp = this.newInstance();
+//        int thispower;
+//        int thisconstant;
+//        while (this.degree() > 0) {
+//            thispower = this.degree();
+//            thisconstant = this.removeTerm(thispower);
+//            temp.addTerm(thisconstant * thispower, thispower - 1);
+//        }
+//        this.clear();
+//        this.transferFrom(temp);
+//    }
+//
+//    /**
+//     * Evaluates the definite integral of this with bounds {@code upperbound} to
+//     * {@code lowerbound}.
+//     *
+//     * @return the area bounded by the polynomial curve and bounds of
+//     *         integration
+//     *
+//     * @param upperbound
+//     *            the upper bound of integration
+//     *
+//     * @param lowerbound
+//     *            the lower bound of integration
+//     *
+//     * @ensures defIntegral = F({@code upperbound}) - F({@code lowerbound})
+//     *          where d/dx(F(x)) = this
+//     *
+//     *
+//     */
+//    double defIntegral(double upperbound, double lowerbound) {
+//
+//        double answer = 0;
+//        int thisdegree;
+//        int thisconstant;
+//
+//        thisdegree = this.degree();
+//        thisconstant = this.removeTerm(thisdegree);
+//        if (thisdegree == 0) {
+//            answer = (thisconstant * upperbound - thisconstant * lowerbound);
+//        } else {
+//            answer = thisconstant * Math.pow(upperbound, thisdegree)
+//                    - thisconstant * Math.pow(lowerbound, thisdegree);
+//            answer = answer + this.defIntegral(upperbound, lowerbound);
+//        }
+//        this.addTerm(thisconstant, thisdegree);
+//        return answer;
+//    }
 
     @Override
     public String toString() {
+
         Polynomial thisduplicate = duplicate(this);
         StringBuilder answer = new StringBuilder();
 
         int thisdegree;
         int thisconstant;
         while (this.degree() > 0) {
+
             thisdegree = this.degree();
             thisconstant = this.removeTerm(thisdegree);
 
             answer.append(thisconstant + "x^(" + thisdegree + ") + ");
         }
+
         thisconstant = this.removeTerm(0);
-        if (thisconstant != 0) {
-            answer.append(thisconstant);
-        }
+
+        answer.append(thisconstant);
+
         this.transferFrom(thisduplicate);
+
         return answer.toString();
     }
 
