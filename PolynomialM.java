@@ -1,4 +1,3 @@
-
 /**
  * Models an algebraic polynomial expression
  *
@@ -10,7 +9,7 @@
  *
  *
  */
-public class PolynomialM extends PolynomialSecondary {
+public class PolynomialM extends Polynomial {
     /*
      * Private members --------------------------------------------------------
      */
