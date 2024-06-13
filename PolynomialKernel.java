@@ -1,4 +1,4 @@
-import components.standard.Standard;
+
 
 /**
  * Models an algebraic polynomial expression
@@ -11,7 +11,7 @@ import components.standard.Standard;
  *
  *
  */
-public interface PolynomialKernel extends Standard<Polynomial> {
+public interface PolynomialKernel{
     /**
      * Adds a term with coefficient {@code constant} and degree {@code power} to
      * this.
@@ -51,4 +51,26 @@ public interface PolynomialKernel extends Standard<Polynomial> {
      */
     int degree();
 
+    /**
+     * Resets this to it's default value upon initializiation.
+     *
+     * 
+     * @ensures this = 0
+     *
+     */
+    void clear();
+    
+    /**
+     * Creates and returns a new polynomial instance of this.
+     *
+     * @return a polynomial of the same type as this initialized to default value
+     */
+    Polynomial newInstance();
+
+    /**
+     * Replaces the polynomial represented by this with the polynomial in {@code source}
+     *
+     * @ensures this = #source and source = 0
+     */
+    void transferFrom(Polynomial source);
 }
