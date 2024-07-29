@@ -1,3 +1,12 @@
+
+import RationalNumber.RationalNumber;
+
+
+
+
+
+
+
 /**
  * Models an algebraic polynomial expression
  *
@@ -5,11 +14,15 @@
  *
  */
 /**
- * Polynomial kernel component with secondary methods.
+ * Polynomial component with secondary methods.
  *
  *
  */
 public abstract class Polynomial implements PolynomialKernel {
+
+    public static final Polynomial ZERO = new PolynomialLinked();
+
+
     /**
      * Negates p. Convenience method.
      *
@@ -22,42 +35,15 @@ public abstract class Polynomial implements PolynomialKernel {
     private static void negate(Polynomial p) {
         int power = p.degree();
         if (power == 0) {
-            int constant = p.removeTerm(0);
-            p.addTerm(-constant, 0);
+            RationalNumber constant = p.removeTerm(0);
+            constant.negate();
+            p.addTerm(constant, 0);
         } else {
-            int constant = p.removeTerm(power);
+            RationalNumber constant = p.removeTerm(power);
             negate(p);
-            p.addTerm(-constant, power);
+            constant.negate();
+            p.addTerm(constant, power);
         }
-    }
-
-    /**
-     * returns a duplicate of p. Convenience method.
-     *
-     * @param p
-     *            the polynomial to be duplicated
-     *
-     * @ensures duplicate = p
-     *
-     * @return a perfect copy of p
-     */
-    private static Polynomial duplicate(Polynomial p) {
-        Polynomial copy = p.newInstance();
-        Polynomial temp = p.newInstance();
-        int degree;
-        int constant;
-        while (p.degree() > 0) {
-            degree = p.degree();
-
-            constant = p.removeTerm(degree);
-            copy.addTerm(constant, degree);
-            temp.addTerm(constant, degree);
-        }
-        constant = p.removeTerm(0);
-        copy.addTerm(constant, 0);
-        temp.addTerm(constant, 0);
-        p.transferFrom(temp);
-        return copy;
     }
 
     /**
@@ -72,13 +58,36 @@ public abstract class Polynomial implements PolynomialKernel {
      * @ensures this = #this + p
      */
     void add(Polynomial p) {
+        int power;
         while (p.degree() > 0) {
-            int power = p.degree();
-            int constant = p.removeTerm(power);
+            power = p.degree();
+            RationalNumber constant = p.removeTerm(power);
             this.addTerm(constant, power);
         }
         this.addTerm(p.removeTerm(0), 0);
         p.clear();
+    }
+
+    /**
+     * Adds {@code Polynomial} p to this and returns the result. 
+     *
+     * @param p
+     *            the polynomial to be added
+     *
+     * @ensures this = #this + p
+     */
+    public Polynomial addkeep(Polynomial p) {
+        int power;
+        Polynomial answer = this.dupe();
+        Polynomial copy = p.dupe();
+        while (copy.degree() > 0) {
+            power = copy.degree();
+            RationalNumber constant = copy.removeTerm(power);
+            answer.addTerm(constant, power);
+        }
+        answer.addTerm(copy.removeTerm(0), 0);
+        copy.clear();
+        return answer;
     }
 
     /**
@@ -97,75 +106,25 @@ public abstract class Polynomial implements PolynomialKernel {
         this.add(p);
     }
 
-//////////////////////////////////////////////////
-//    DIFFERENT IMPLEMENTATIONS OF MULTIPLY    ///
-//////////////////////////////////////////////////
+    /**
+     * Subtracts p from this.
+     *
+     * @param p
+     *            the polynomial to be subtracted
+     * @updates this
+     *
+     * @clears p
+     *
+     * @ensures this = #this - p
+     */
+    public Polynomial subtractkeep(Polynomial p) {
+        Polynomial answer = this.dupe();
+        Polynomial copy = p.dupe();
+        negate(copy);
+        answer.add(copy);
+        return answer;
+    }
 
-//    void multiply(Polynomial p) {
-//        Polynomial answer = this.newInstance();
-//        Polynomial temp = this.newInstance();
-//        while (p.degree() != 0) {
-//            int ppower = p.degree();
-//            int pconstant = p.removeTerm(ppower);
-//
-//            while (this.degree() != 0) {
-//                int thispower = this.degree();
-//                int thisconstant = this.removeTerm(thispower);
-//                temp.addTerm(thisconstant, thispower);
-//
-//                answer.addTerm(pconstant * thisconstant, ppower + thispower);
-//            }
-//            int constantterm = this.removeTerm(0);
-//            temp.addTerm(constantterm, 0);
-//            answer.addTerm(pconstant * constantterm, ppower);
-//
-//            this.transferFrom(temp);
-//        }
-//        int pconstantterm = p.removeTerm(0);
-//        while (this.degree() != 0) {
-//            int thispower = this.degree();
-//            int thisconstant = this.removeTerm(thispower);
-//
-//            answer.addTerm(pconstantterm * thisconstant, thispower);
-//        }
-//        answer.addTerm(pconstantterm * this.removeTerm(0), 0);
-//        this.transferFrom(answer);
-//    }
-////////////////////////////////////////////////////////////////////////////////
-//    void multiply(Polynomial p) {
-//        int thispower = this.degree();
-//        int thisconstant = this.removeTerm(thispower);
-//        int ppower;
-//        int pconstant;
-//        Polynomial temp = this.newInstance();
-//        if (thispower == 0) {
-//            while (p.degree() > 0) {
-//                ppower = p.degree();
-//                pconstant = p.removeTerm(ppower);
-//                this.addTerm(pconstant * thisconstant, ppower);
-//                temp.addTerm(pconstant, ppower);
-//            }
-//            pconstant = p.removeTerm(0);
-//            this.addTerm(pconstant * thisconstant, 0);
-//            temp.addTerm(pconstant, 0);
-//            p.transferFrom(temp);
-//        } else {
-//            while (p.degree() > 0) {
-//                ppower = p.degree();
-//                pconstant = p.removeTerm(ppower);
-//                this.addTerm(pconstant * thisconstant, ppower);
-//                temp.addTerm(pconstant, ppower);
-//            }
-//            pconstant = p.removeTerm(0);
-//            this.addTerm(pconstant * thisconstant, 0);
-//            temp.addTerm(pconstant, 0);
-//            p.transferFrom(temp);
-//            this.multiply(p);
-//
-//        }
-//        this.add(temp);
-//
-//    }
     /**
      * Multiplies this by p.
      *
@@ -178,115 +137,80 @@ public abstract class Polynomial implements PolynomialKernel {
      * @ensures this = #this * p
      */
     public void multiply(Polynomial p) {
-        Polynomial pcopy = duplicate(p);
-        Polynomial temp = this.newInstance();
-        int thispower = this.degree();
-        int thisconstant = this.removeTerm(thispower);
-
-        int ppower;
-        int pconstant;
-        while (p.degree() > 0) {
-            ppower = p.degree();
-            pconstant = p.removeTerm(ppower);
-            temp.addTerm(pconstant * thisconstant, ppower + thispower);
+        Polynomial answer = this.newInstance();
+        int thisdegree = this.degree();
+        while(thisdegree != 0){
+            answer.add(p.multiplyTerm(this.removeTerm(thisdegree), thisdegree));
+            
+            thisdegree = this.degree();
         }
-        pconstant = p.removeTerm(0);
-        temp.addTerm(pconstant * thisconstant, 0 + thispower);
-
-        if (thispower != 0) {
-            this.multiply(pcopy);
-        }
-        this.add(temp);
+        answer.add(p.multiplyTerm(this.removeTerm(0), 0));
+        this.transferFrom(answer);
     }
 
-//    /**
-//     * Divides this by p.
-//     *
-//     * @param p
-//     *            the denominator polynomial
-//     *
-//     * @updates this
-//     *
-//     * @return the remainder of #this / p
-//     *
-//     * @ensures this = #this / p and divide = [remainder of #this/p]
-//     */
-//    Polynomial divide(Polynomial p) {
-//        Polynomial rem = this.newInstance();
-//        Polynomial pcopy = duplicate(p);
-//
-//        int thisdegree = this.degree();
-//        int thiscoeff = this.removeTerm(thisdegree);
-//        this.addTerm(thiscoeff, thisdegree);
-//
-//        int pdegree = p.degree();
-//        int pcoeff = p.removeTerm(pdegree);
-//        p.addTerm(pcoeff, pdegree);
-//
-//        int factordegree;
-//        int factorcoeff;
-//        if (thisdegree >= pdegree) {
-//            factordegree = thisdegree - pdegree;
-//            factorcoeff = thiscoeff / pcoeff;
-//
-//            Polynomial temp = p.newInstance();
-//            int ppower;
-//            int pconstant;
-//            while (p.degree() > 0) {
-//                ppower = p.degree();
-//                pconstant = p.removeTerm(ppower);
-//                temp.addTerm(pconstant * factorcoeff, ppower + factordegree);
-//            }
-//            pconstant = p.removeTerm(0);
-//            temp.addTerm(pconstant * factorcoeff, factordegree);
-//
-//            negate(temp);
-//
-//            this.add(temp);
-//
-//            rem = this.divide(pcopy);
-//
-//            this.addTerm(factorcoeff, factordegree);
-//        } else {
-//            rem = duplicate(this);
-//        }
-//        return rem;
-//    }
-//    /**
-//     * Divides this by p.
-//     *
-//     * @param p
-//     *            the denominator polynomial
-//     *
-//     * @updates this
-//     *
-//     * @return the remainder of #this / p
-//     *
-//     * @ensures this = #this / p and divide = [remainder of #this/p]
-//     */
-//    //p is the divisor
-//    //#this is the dividend of division
-//    //this is quotient of division
-//    //return is remainder of division
-//    //duplicate p, multiply p by
-//    public Polynomial divide(Polynomial p) {
-//        Polynomial quotient = this.newInstance();
-//        Polynomial temp = this.newInstance();
-//
-//        int divpower = p.degree();
-//        int divcoeff = p.removeTerm(divpower);
-//
-//        int thispower = this.degree();
-//        int thiscoeff = this.removeTerm(thispower);
-//
-//        int quotcoeff = thiscoeff / divcoeff;
-//        int quotpower = thispower - divpower;
-//
-//        while (this.degree() > p.degree()) {
-//            
-//        }
-//
-//    }
+      /**
+     * Multiplies this by {@code constant} X ^{@code degree}.
+     *
+     * @param p
+     *            the polynomial to be multiplied
+     * @updates this
+     *
+     * @ensures this = #this * p
+     */
+    public Polynomial multiplyTerm(RationalNumber constant, int degree) {
+        Polynomial result = this.newInstance();
+        Polynomial thiscopy = this.dupe();
+        RationalNumber newconstant;
+        int thisdegree = thiscopy.degree();
+        while(thisdegree != 0){
+            newconstant = thiscopy.removeTerm(thisdegree);
+            newconstant.multiply(constant);
+
+            result.addTerm(newconstant, thisdegree + degree);
+
+            thisdegree = thiscopy.degree();
+        }
+        newconstant = thiscopy.removeTerm(0);
+        newconstant.multiply(constant);
+        result.addTerm(newconstant, 0 + degree);
+        return result;
+    }
+
+
+   /**
+    * Divides this by p.
+    *
+    * @param p
+    *          the denominator polynomial
+    *
+    * @updates this
+    *
+    * @return the remainder of #this / p
+    *
+    * @ensures this = #this / p and divide = [remainder of #this/p]
+    */
+    public Polynomial divide(Polynomial p) {
+        Polynomial quotient = this.newInstance();
+        Polynomial thiscopy = this.dupe();
+        Polynomial divisor = p.dupe();
+        RationalNumber pconstant = p.getTerm(p.degree());
+        int thiscopydegree = thiscopy.degree();
+        int divisordegree = p.degree();
+
+        while(thiscopydegree >= divisordegree){
+            RationalNumber thisconstant = thiscopy.getTerm(thiscopydegree);
+            thisconstant.divide(pconstant);
+            quotient.addTerm(thisconstant, thiscopydegree - divisordegree);
+            thiscopy.subtract(divisor.multiplyTerm(thisconstant, thiscopydegree - divisordegree));
+
+            divisor = p.dupe();
+            thiscopydegree = thiscopy.degree();
+        }
+        this.transferFrom(quotient);
+        return thiscopy;
+
+
+    }
 
 //    /**
 //     * Evaluates this at x = {@code x}.
@@ -313,7 +237,7 @@ public abstract class Polynomial implements PolynomialKernel {
 //        answer = answer + pconstant;
 //        return answer;
 //    }
-//
+
 //    /**
 //     * Checks if p is a factor of this.
 //     *
@@ -325,21 +249,21 @@ public abstract class Polynomial implements PolynomialKernel {
 //     */
 //    boolean isMultiple(Polynomial p) {
 //        boolean answer = false;
-//        Polynomial thistemp = duplicate(this);
-//        Polynomial pcopy = duplicate(p);
-//
-//        Polynomial rem = this.divide(pcopy);
-//        this.transferFrom(thistemp);
-//
-//        if (rem.removeTerm(0) == 0 && rem.degree() == 0) {
+//        Polynomial thiscopy = this.dupe();
+//        Polynomial pcopy = p.dupe();
+
+//        Polynomial rem = thiscopy.divide(pcopy);
+
+
+//        if (rem.equals(PolynomialLinked.ZERO)) {
 //            answer = true;
 //        }
-//
+
 //        return answer;
 //    }
-//
+
 //    /**
-//     * takes the derivative this.
+//     * takes the derivative of this.
 //     *
 //     * @updates this
 //     *
@@ -358,7 +282,7 @@ public abstract class Polynomial implements PolynomialKernel {
 //        this.clear();
 //        this.transferFrom(temp);
 //    }
-//
+
 //    /**
 //     * Evaluates the definite integral of this with bounds {@code upperbound} to
 //     * {@code lowerbound}.
@@ -398,28 +322,27 @@ public abstract class Polynomial implements PolynomialKernel {
 
     @Override
     public String toString() {
-
-        Polynomial thisduplicate = duplicate(this);
+        Polynomial thisduplicate = this.dupe();
         StringBuilder answer = new StringBuilder();
-
         int thisdegree;
-        int thisconstant;
+        RationalNumber thisconstant;
         while (this.degree() > 0) {
-
             thisdegree = this.degree();
             thisconstant = this.removeTerm(thisdegree);
-
-            answer.append(thisconstant + "x^(" + thisdegree + ") + ");
+            if(!thisconstant.equals(RationalNumber.ONE)){
+                answer.append("(" + thisconstant + ")");
+            }
+            answer.append( "x^(" + thisdegree + ") + ");
         }
-
         thisconstant = this.removeTerm(0);
-
         answer.append(thisconstant);
-
         this.transferFrom(thisduplicate);
-
         return answer.toString();
     }
+
+
+
+
 
     /**
      * Returns True iff this and p are identical in content.

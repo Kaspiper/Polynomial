@@ -1,12 +1,10 @@
 
-
+import RationalNumber.RationalNumber;
 /**
  * Models an algebraic polynomial expression
  *
  * @author Kasper
  *
- */
-/**
  * Polynomial kernel component with primary methods.
  *
  *
@@ -29,7 +27,7 @@ public interface PolynomialKernel{
      *
      * @ensures this = constant * (x ^ power) + #this
      */
-    void addTerm(int constant, int power);
+    void addTerm(RationalNumber constant, int power);
 
     /**
      * Removes the term raised to {@code power} and reports its coefficient.
@@ -40,7 +38,32 @@ public interface PolynomialKernel{
      * @updates this
      * @ensures #this = removeTerm * (x ^ power) + this
      */
-    int removeTerm(int power);
+    RationalNumber removeTerm(int power);
+
+
+
+    /**
+     * returns a duplicate of p. Convenience method.
+     *
+     * @param p
+     *            the polynomial to be duplicated
+     *
+     * @ensures duplicate = p
+     *
+     * @return a perfect copy of p
+     */
+    public Polynomial dupe();
+
+
+    /**
+     * Retrieves the term raised to {@code power} and reports its coefficient.
+     *
+     * @param power
+     *            the degree of the term to be removed
+     * @return the coefficient
+     */
+
+    public RationalNumber getTerm(int power);
 
     /**
      * Reports the degree of this.
