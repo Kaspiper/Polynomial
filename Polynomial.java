@@ -370,15 +370,17 @@ public abstract class Polynomial implements PolynomialKernel {
             }
             answer.append("x");
             if(thisdegree != 1){
-                answer.append("^(" + thisdegree + ")");
+                answer.append("^" + thisdegree );
             }
             answer.append( " + ");
         }
         thisconstant = this.removeTerm(0);
-        answer.append(thisconstant);
+        answer.append("(" + thisconstant + ")");
+        
         this.transferFrom(thisduplicate);
         return answer.toString();
     }
+
 
     /**
      * Returns True iff this and p are identical in content.

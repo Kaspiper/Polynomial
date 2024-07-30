@@ -116,7 +116,6 @@ public class RationalNumber implements Comparable<RationalNumber>{
         this.DENOMINATOR = lcmtemp;
     }
 
-
     /**
      *  Instance method used to add BigInteger {@code b} to this
      * 
@@ -128,7 +127,6 @@ public class RationalNumber implements Comparable<RationalNumber>{
     public void add(BigInteger b){
         this.NUMERATOR = this.NUMERATOR.add(b.multiply(this.DENOMINATOR));
     }
-
 
     /**
      *  Instance method used to subtract RationalNumber {@code b} from this
@@ -145,8 +143,6 @@ public class RationalNumber implements Comparable<RationalNumber>{
         this.DENOMINATOR = lcmtemp;
     }
 
-
-
     /**
      *  Instance method used to subtract BigInteger {@code b} from this
      * 
@@ -158,8 +154,6 @@ public class RationalNumber implements Comparable<RationalNumber>{
     public void subtract(BigInteger b){
         this.NUMERATOR = this.NUMERATOR.subtract(b.multiply(this.DENOMINATOR));
     }
-
-
 
     /**
      *  Instance method used to multiply this with another RationalNumber {@code b}
@@ -232,10 +226,32 @@ public class RationalNumber implements Comparable<RationalNumber>{
         return answer;
     }
 
+    /**
+     *  Instance method used to guage if this is less than zero
+     * 
+     * @return
+     *             true iff this is less than zero
+     * 
+     */
+    public boolean isNegative(){
+        return (this.NUMERATOR.compareTo(BigInteger.ZERO) < 0);
+    }
+
+    /**
+     *  Instance method used to guage if this is an Integer
+     * 
+     * @return
+     *             true iff this is an Integer
+     * 
+     */
+    public boolean isInteger(){
+        return (this.DENOMINATOR.compareTo(BigInteger.ONE) == 0);
+    }
 
 
 
-     /**
+
+    /**
      * No argument constructor for the class RationalNumber with numeric value initialized to 0.
      *  
      * @returns a new instance of RationalNumber with numeric value 0.
@@ -246,7 +262,7 @@ public class RationalNumber implements Comparable<RationalNumber>{
     }
 
 
-     /**
+    /**
      * Constructor for the class RationalNumber with numeric value initialized to {@code a} / {@code b}.
      *  
      * @returns a new instance of RationalNumber 
@@ -365,7 +381,4 @@ public class RationalNumber implements Comparable<RationalNumber>{
         
     //     return stringRep;
     // }
-    void main(){
-
-    }
 }
