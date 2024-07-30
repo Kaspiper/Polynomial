@@ -15,7 +15,6 @@ import RationalNumber.RationalNumber;
  */
 public class PolynomialLinked extends Polynomial{
 
-
     /*
      * Private members --------------------------------------------------------
      */
@@ -48,6 +47,7 @@ public class PolynomialLinked extends Polynomial{
 
     /**
      * Creator of initial representation.
+     * (Single node with degree 0 constant 0, next is a null pointer)
      */
     private void createNewRep() {
         this.expression = new Term();
@@ -114,7 +114,9 @@ public class PolynomialLinked extends Polynomial{
      * @param power
      *            the degree of the term to be removed
      * @return the coefficient
+     * 
      * @updates this
+     * 
      * @ensures #this = removeTerm * (x ^ power) + this
      */
     @Override
@@ -149,7 +151,6 @@ public class PolynomialLinked extends Polynomial{
      * @param power
      *            the degree of the term to be found
      * 
-     * 
      * @return the coefficient
      */
     @Override
@@ -181,11 +182,17 @@ public class PolynomialLinked extends Polynomial{
 
     }
 
+    /**
+     * Resets this to it's default value upon initializiation.
+     *
+     * 
+     * @ensures this = 0
+     *
+     */
     @Override
     public final void clear() {
         this.createNewRep();
     }
-
 
     /**
      * returns a duplicate of p. Convenience method.
@@ -193,7 +200,7 @@ public class PolynomialLinked extends Polynomial{
      * @param p
      *            the polynomial to be duplicated
      *
-     * @ensures duplicate = p
+     * @ensures dupe = p
      *
      * @return a perfect copy of p
      */
@@ -209,6 +216,12 @@ public class PolynomialLinked extends Polynomial{
         return copy;
     }
 
+
+    /**
+     * Creates and returns a new polynomial instance of this.
+     *
+     * @return a polynomial of the same type as this initialized to default value
+     */
     @Override
     public final Polynomial newInstance() {
         try {
@@ -219,6 +232,11 @@ public class PolynomialLinked extends Polynomial{
         }
     }
 
+    /**
+     * Replaces the polynomial represented by this with the polynomial in {@code source}
+     *
+     * @ensures this = #source and source = 0
+     */
     @Override
     public final void transferFrom(Polynomial source) {
         assert this.expression != null : "NULL TERM FOUND";
@@ -240,18 +258,18 @@ public class PolynomialLinked extends Polynomial{
     }
 
     /**
-     * 
+     * Initialize an instance of polynomial with the given coefficients {@coeff}
      */
     public PolynomialLinked(RationalNumber... coeff) {
         this.createNewRep();
         int degree = coeff.length - 1;
         for (RationalNumber constant : coeff) {
-            this.addTerm(constant, --degree);
+            this.addTerm(constant, degree--);
         }
     }
 
     /**
-     * 
+     * Initialize an instance of polynomial with the given coefficients {@coeff}
      */
     public PolynomialLinked(int... coeff) {
         this.createNewRep();
@@ -260,8 +278,4 @@ public class PolynomialLinked extends Polynomial{
             this.addTerm(new RationalNumber(constant), degree--);
         }
     }
-
-
-
-    
 }

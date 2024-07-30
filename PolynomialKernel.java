@@ -10,7 +10,7 @@ import RationalNumber.RationalNumber;
  *
  */
 public interface PolynomialKernel{
-    /**
+        /**
      * Adds a term with coefficient {@code constant} and degree {@code power} to
      * this.
      *
@@ -20,10 +20,6 @@ public interface PolynomialKernel{
      *            the degree of the term to be added
      *
      * @updates this
-     *
-     * @requires -MAX_INT <= constant + current <= MAX_INT where current = the
-     *           corresponding coefficient to {@code power} in this and -MAX_INT
-     *           <= power <= MAX INT
      *
      * @ensures this = constant * (x ^ power) + #this
      */
@@ -35,25 +31,12 @@ public interface PolynomialKernel{
      * @param power
      *            the degree of the term to be removed
      * @return the coefficient
+     * 
      * @updates this
+     * 
      * @ensures #this = removeTerm * (x ^ power) + this
      */
     RationalNumber removeTerm(int power);
-
-
-
-    /**
-     * returns a duplicate of p. Convenience method.
-     *
-     * @param p
-     *            the polynomial to be duplicated
-     *
-     * @ensures duplicate = p
-     *
-     * @return a perfect copy of p
-     */
-    public Polynomial dupe();
-
 
     /**
      * Retrieves the term raised to {@code power} and reports its coefficient.
@@ -62,7 +45,6 @@ public interface PolynomialKernel{
      *            the degree of the term to be removed
      * @return the coefficient
      */
-
     public RationalNumber getTerm(int power);
 
     /**
@@ -82,7 +64,20 @@ public interface PolynomialKernel{
      *
      */
     void clear();
-    
+
+
+    /**
+     * returns a duplicate of p. Convenience method.
+     *
+     * @param p
+     *            the polynomial to be duplicated
+     *
+     * @ensures dupe = p
+     *
+     * @return a perfect copy of p
+     */
+    public Polynomial dupe();
+
     /**
      * Creates and returns a new polynomial instance of this.
      *

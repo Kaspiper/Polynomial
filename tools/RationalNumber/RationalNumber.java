@@ -213,6 +213,28 @@ public class RationalNumber implements Comparable<RationalNumber>{
         dividend.setDenominator(temp);
     }
 
+
+    /**
+     *  Instance method used to raise this to the power of {@code exponent}
+     * 
+     * @param exponent
+     *              the exponent of this
+     * 
+     * @return
+     *              this raised to the power of {@code exponent}
+     * 
+     */
+    public RationalNumber power(int exponent){
+        RationalNumber answer = new RationalNumber(1);
+        for(int i = 0; i < exponent; i++){
+            answer.multiply(this);
+        }
+        return answer;
+    }
+
+
+
+
      /**
      * No argument constructor for the class RationalNumber with numeric value initialized to 0.
      *  
