@@ -4,13 +4,13 @@ public class PolynomialTest {
     
     public static void main(String[] args) {
        
-        Polynomial a = new PolynomialLinked(3,-2,12,-8);
-        Polynomial b = new PolynomialLinked(new RationalNumber(1), new RationalNumber(-2,3));
-        
-        System.out.print(a + " divided by " + b + " is ");
+        Polynomial a = new PolynomialLinked(1,9,2,1,4);
+        Polynomial b = new PolynomialLinked(1,0,0,0,1);
         Polynomial c = a.divide(b);
-        System.out.println(a);
-        System.out.println("REMAINDER: " + c);
+        System.out.println(c);
 
+      
+
+        
     }
 }
